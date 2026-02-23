@@ -62,18 +62,12 @@ const Todo = () => {
       console.log("delreq:", err);
     }
   };
-
   const handleChecked = async (id, currentCheckedStatus) => {
     try {
       const newStatus = !currentCheckedStatus;
-
-      // Hardcoded URL test
-      await axios.put(
-        `https://mern-todo-backend-hi74.onrender.com/todos/${id}`,
-        {
-          checked: newStatus,
-        },
-      );
+      await axios.put(`${API_URL}/${id}`, {
+        checked: newStatus,
+      });
 
       setAddTask((prev) =>
         prev.map((task) =>
