@@ -63,83 +63,83 @@ const Todo = () => {
     }
   };
 
-  const handleChecked = async (id, checked) => {
+  const handleChecked = async (id, currentCheckedStatus) => {
     try {
-      const checkedUpdatereq = await axios.put(`${API_URL}${id}`, {
-        checked: !checked,
-      });
-      const checkedTask = addTask.map((task) =>
-        task._id === id
-          ? { ...task, checked: checkedUpdatereq.data.checked }
-          : task,
+      const newStatus = !currentCheckedStatus;
+
+      // Hardcoded URL test
+      await axios.put(
+        `https://mern-todo-backend-hi74.onrender.com/todos/${id}`,
+        {
+          checked: newStatus,
+        },
       );
-      setAddTask(checkedTask);
+
+      setAddTask((prev) =>
+        prev.map((task) =>
+          task._id === id ? { ...task, checked: newStatus } : task,
+        ),
+      );
     } catch (err) {
-      console.log("checkedupdatereq:", err);
+      console.error("Update failed:", err.response?.status, err.message);
     }
   };
-
   const completedTasks = addTask.filter((task) => task.checked).length;
   const remainingTasks = addTask.filter((task) => !task.checked).length;
-
   return (
-    <div className="min-h-screen bg-gray-100 py-10 px-4">
-      <div className="max-w-md mx-auto bg-white rounded-xl shadow-md overflow-hidden p-6">
-        <h1 className="text-2xl font-bold text-gray-800 mb-6 text-center">
+    <div className="min-h-screen bg-gray-100 py-6 px-2 sm:py-10 sm:px-4">
+      <div className="w-full max-w-lg mx-auto bg-white rounded-xl shadow-md overflow-hidden p-4 sm:p-6">
+        <h1 className="text-xl sm:text-2xl font-bold text-gray-800 mb-6 text-center">
           My Tasks
         </h1>
-
         {/* Input Section */}
-        <div className="flex gap-2 mb-6">
+        <div className="flex flex-col sm:flex-row gap-3 mb-6">
           <input
             type="text"
-            className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="flex-1 px-4 py-3 sm:py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-base"
             value={input}
             onChange={(e) => setInput(e.target.value)}
             placeholder="What needs to be done?"
           />
           <button
             onClick={editId ? handleSave : handleAdd}
-            className={`px-4 py-2 rounded-lg font-semibold text-white transition-colors ${
-              editId
-                ? "bg-green-500 hover:bg-green-600"
-                : "bg-blue-500 hover:bg-blue-600"
+            className={`w-full sm:w-auto px-6 py-3 sm:py-2 rounded-lg font-semibold text-white transition-colors ${
+              editId ? "bg-green-500" : "bg-blue-500"
             }`}
           >
             {editId ? "Save" : "Add"}
           </button>
         </div>
-
-        {/* List Section */}
+        {/* List Section*/}
         <div className="space-y-3">
           {addTask.map((task) => (
             <div
               key={task._id}
-              className="flex items-center justify-between p-3 bg-gray-50 rounded-lg group"
+              className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
             >
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-3 flex-1 min-w-0">
                 <input
                   type="checkbox"
-                  className="w-5 h-5 cursor-pointer accent-blue-500"
+                  className="w-6 h-6 sm:w-5 sm:h-5 cursor-pointer accent-blue-500 flex-shrink-0"
                   checked={task.checked}
                   onChange={() => handleChecked(task._id, task.checked)}
                 />
                 <span
-                  className={`text-gray-700 ${task.checked ? "line-through text-gray-400" : ""}`}
+                  className={`text-gray-700 truncate ${task.checked ? "line-through text-gray-400" : ""}`}
                 >
                   {task.text}
                 </span>
               </div>
-              <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+              <div className="flex gap-3 ml-2">
                 <button
                   onClick={() => handleEdit(task._id, task.text)}
-                  className="text-blue-500 hover:text-blue-700 text-sm font-medium"
+                  className="text-blue-500 text-sm font-medium p-1"
                 >
                   Edit
                 </button>
                 <button
                   onClick={() => handleDelete(task._id)}
-                  className="text-red-500 hover:text-red-700 text-sm font-medium"
+                  className="text-red-500 text-sm font-medium p-1"
                 >
                   Delete
                 </button>
@@ -147,7 +147,6 @@ const Todo = () => {
             </div>
           ))}
         </div>
-
         {/* Stats Section */}
         <div className="mt-8 pt-6 border-t border-gray-100 flex justify-between text-sm font-medium text-gray-500">
           <div className="text-center">
